@@ -37,12 +37,13 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// không lấy được desc !!!
 let products = [
-    { id: 1, name: "iPhone 12 Pro", price: 30000000 },
-    { id: 2, name: "iPhone 11", price: 17000000 },
-    { id: 3, name: "iPhone Xr", price: 11000000 },
+    { id: 1, name: "iPhone 12 Pro", price: 30000000 , "desc": "Iphone 12" },
+    { id: 2, name: "iPhone 11", price: 17000000 ,"desc": "Iphone 11" },
+    { id: 3, name: "iPhone Xr", price: 11000000 , "desc": "Iphone Xr"},
 ];
 
 // Session middleware
@@ -123,6 +124,23 @@ app.post('/add', (req, res) => {
         fn.addFlashMessage(req, 'success', 'Product added successfully');
         return res.redirect('/');
     });
+});
+
+// tui mới làm cái là localhost/edit/1 thôi chứ chưa có click zo chỉnh sửa
+app.get("/edit/:id",  (req, res) => {
+	let id = req.params.id;
+
+	const product = products.find((p) => p.id == id);
+
+	if (!product) {
+		return res.render("notfound");
+	}
+
+	return res.render("edit", {
+		id,
+		...product,
+		errorMsg: "",
+	});
 });
 
 
