@@ -20,10 +20,20 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+<<<<<<< HEAD
                     <th>STT</th>
                     <th>Tên sản phẩm</th>
                     <th>Giá</th>
                     <th>Thao tác</th>
+=======
+                    <td><%= product.id %></td>
+                    <td><a><%= product.name %></a></td>
+                    <td><%= product.price %></td>
+                    <td>
+                        <a href="/edit/<%= product.id %>">Chỉnh sửa</a> |
+                        <a href="/delete/<%= product.id %>">Xóa</a>
+                    </td>
+>>>>>>> origin/main
                 </tr>
             </thead>
             <tbody>
