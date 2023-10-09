@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Danh sách sản phẩm</title>
     <meta charset="utf-8">
@@ -9,36 +10,96 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 
-<div class="container my-3">
-    <h4 class="text-primary">Danh sách sản phẩm</h4>
-    <a class="btn btn-success btn-sm my-2" href="/add">Thêm sản phẩm</a>
-    <p>Chọn một sản phẩm cụ thể để xem chi tiết</p>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>STT</th>
-            <th>Tên sản phẩm</th>
-            <th>Giá</th>
-            <th>Thao tác</th>
-        </tr>
-        </thead>
-        <tbody>
-            <% products.forEach(function(product){ %>
+    <div class="container my-3">
+        <h4 class="text-primary">Danh sách sản phẩm</h4>
+        <a class="btn btn-success btn-sm my-2" href="/add">Thêm sản phẩm</a>
+        <p>Chọn một sản phẩm cụ thể để xem chi tiết</p>
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td><%= product.id %></td>
-                    <td><a><%= product.name %></a></td>
-                    <td><%= product.price %></td>
-                    <td>
-                        <a href="#">Chỉnh sửa</a> |
-                        <a href="#">Xóa</a>
-                    </td>
+                    <th>STT</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Thao tác</th>
                 </tr>
-            <% }); %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <% products.forEach(function(product){ %>
+                    <tr>
+                        <td>
+                            <%= product.id %>
+                        </td>
+                        <td><a>
+                                <%= product.name %>
+                            </a></td>
+                        <td>
+                            <%= product.price %>
+                        </td>
+                        <td>
+                            <a href="/edit/<%= product.id %>">Chỉnh sửa</a> |
+
+                            <a href="#" class="delete-product" data-product-id="<%= product.id %>">Xóa</a>
+
+                        </td>
+                    </tr>
+                    <% }); %>
+                        <% if (messages && messages.success) { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= messages.success %>
+                            </div>
+                            <% } %>
+            </tbody>
+        </table>
+        <!-- Add a modal dialog for confirmation -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this product?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form method="POST" action="/delete" id="deleteProductForm">
+                    <input type="hidden" name="id" id="deleteProductId" value="">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
+
 </body>
+<!-- Add this JavaScript after including jQuery and Bootstrap scripts -->
+<script>
+    $(document).ready(function () {
+        // When the "Xóa" (Delete) link is clicked
+        $('.delete-product').click(function (e) {
+            e.preventDefault();
+            const productId = $(this).data('product-id');
+
+            // Set the product ID in the hidden input field
+            $('#deleteProductId').val(productId);
+
+            // Show the confirmation modal
+            $('#confirmDeleteModal').modal('show');
+        });
+
+        // When the modal is hidden, reset the form
+        $('#confirmDeleteModal').on('hidden.bs.modal', function () {
+            $('#deleteProductId').val('');
+        });
+    });
+</script>
+
+
 </html>

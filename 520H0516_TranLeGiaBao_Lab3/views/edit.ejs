@@ -14,6 +14,11 @@
 		/>
 	</head>
 	<body>
+			<% if (messages && messages.error) { %>
+			<div class="alert alert-danger" role="alert">
+			  <%= messages.error %>
+			</div>
+			<% } %>
 		<div>
 			<div class="modal-dialog">
 				<form action="/edit" method="post">
@@ -24,7 +29,6 @@
 								Cập nhật thông tin sản phẩm
 							</h4>
 						</div>
-
 						<!-- Modal body -->
 						<div class="modal-body">
 							<div class="modal-body">
@@ -53,9 +57,9 @@
 								</div>
 								<div class="form-group">
 									<label for="desc">Mô tả sản phẩm</label>
-									<textarea class="form-control" rows="5" id="desc" name="desc" value = "<%= desc %>">
-</textarea
-									>
+									<textarea class="form-control" rows="5" id="desc" name="desc" >
+<%= desc %>
+									</textarea>
 								</div>
 								<% if (errorMsg) { %>
 								<div class="alert alert-danger"><%= errorMsg %></div>

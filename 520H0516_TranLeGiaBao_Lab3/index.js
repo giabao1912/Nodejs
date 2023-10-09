@@ -1,5 +1,6 @@
 
 const express = require('express');
+const flash = require("express-flash");
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const multer = require('multer');
@@ -38,8 +39,9 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-// không lấy được desc !!!
+
 let products = [
     { id: 1, name: "iPhone 12 Pro", price: 30000000 , "desc": "Iphone 12" },
     { id: 2, name: "iPhone 11", price: 17000000 ,"desc": "Iphone 11" },
@@ -52,6 +54,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
 }));
+app.use(flash());
 
 app.use((req, res, next) => {
     res.locals.flashMessages = req.session.flashMessages || [];
@@ -126,7 +129,6 @@ app.post('/add', (req, res) => {
     });
 });
 
-// tui mới làm cái là localhost/edit/1 thôi chứ chưa có click zo chỉnh sửa
 app.get("/edit/:id",  (req, res) => {
 	let id = req.params.id;
 
@@ -139,11 +141,49 @@ app.get("/edit/:id",  (req, res) => {
 	return res.render("edit", {
 		id,
 		...product,
+        title: "Chỉnh sửa thông tin sản phẩm",
 		errorMsg: "",
 	});
 });
 
 
+app.post("/edit", (req, res) => {
+	let { id, name, price, desc } = req.body;
+
+	const idx = products.findIndex((p) => p.id === parseInt(id));
+
+	if (idx < 0) {
+		return res.redirect("/");
+	}
+
+	products[idx].name = name;
+	products[idx].price = parseInt(price);
+	products[idx].desc = desc;
+
+    req.flash("success", "Product updated successfully");
+	res.redirect("/");
+
+
+});
+
+app.post("/delete", (req, res) => {
+    const id = parseInt(req.body.id);
+
+    const idx = products.findIndex((p) => p.id === id);
+
+    if (idx >= 0) {
+        const name = products[idx].name;
+
+        // Delete the product
+        products.splice(idx, 1);
+
+        req.flash("success", "Product deleted successfully");
+        return res.redirect("/");
+    }
+
+    req.flash("error", "Product not found");
+    return res.redirect("/");
+});
 
 app.use((req, res) => {
     res.end('Lien ket nay khong duoc ho tro');
