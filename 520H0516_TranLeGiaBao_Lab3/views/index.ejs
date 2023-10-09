@@ -31,8 +31,8 @@
                     <td><a><%= product.name %></a></td>
                     <td><%= product.price %></td>
                     <td>
-                        <a href="#">Chỉnh sửa</a> |
-                        <a href="#">Xóa</a>
+                        <a href="/edit/<%= product.id %>">Chỉnh sửa</a> |
+                        <a href="/delete/<%= product.id %>">Xóa</a>
                     </td>
                 </tr>
             <% }); %>

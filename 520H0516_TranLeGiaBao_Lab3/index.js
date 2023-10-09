@@ -41,9 +41,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // không lấy được desc !!!
 let products = [
-    { id: 1, name: "iPhone 12 Pro", price: 30000000 , "desc": "Iphone 12" },
-    { id: 2, name: "iPhone 11", price: 17000000 ,"desc": "Iphone 11" },
-    { id: 3, name: "iPhone Xr", price: 11000000 , "desc": "Iphone Xr"},
+    { id: 1, name: "iPhone 12 Pro", price: 30000000, "desc": "Iphone 12" },
+    { id: 2, name: "iPhone 11", price: 17000000, "desc": "Iphone 11" },
+    { id: 3, name: "iPhone Xr", price: 11000000, "desc": "Iphone Xr" },
 ];
 
 // Session middleware
@@ -127,20 +127,40 @@ app.post('/add', (req, res) => {
 });
 
 // tui mới làm cái là localhost/edit/1 thôi chứ chưa có click zo chỉnh sửa
-app.get("/edit/:id",  (req, res) => {
-	let id = req.params.id;
+app.get("/edit/:id", (req, res) => {
+    let id = req.params.id;
 
-	const product = products.find((p) => p.id == id);
+    const product = products.find((p) => p.id == id);
 
-	if (!product) {
-		return res.render("notfound");
-	}
+    if (!product) {
+        return res.render("notfound");
+    }
 
-	return res.render("edit", {
-		id,
-		...product,
-		errorMsg: "",
-	});
+    return res.render("edit", {
+        title: `Edit ${product.name}`,
+        id,
+        ...product,
+        errorMsg: "",
+    });
+});
+
+// tui mới làm cái là localhost/edit/1 thôi chứ chưa có click zo chỉnh sửa
+app.post("/edit", (req, res) => {
+    let id = req.body.id;
+    
+    const product = products.find((p) => p.id == id);
+    
+    if (!product) {
+        return res.render("notfound");
+    }
+
+    let { name, price, desc } = req.body;
+    product.name = name || product.name;
+    product.price = price || product.price;
+    product.desc = desc || product.desc;
+
+    // TODO: ông add thêm cái flash message chổ này để thông báo cho người dùng là cập nhật thành công nè
+    return res.redirect("/");
 });
 
 
