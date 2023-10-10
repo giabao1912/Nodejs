@@ -4,15 +4,13 @@
 <head>
     <title>Danh sách sản phẩm</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-
     <div class="container my-3">
         <h4 class="text-primary">Danh sách sản phẩm</h4>
         <a class="btn btn-success btn-sm my-2" href="/add">Thêm sản phẩm</a>
@@ -20,20 +18,10 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-<<<<<<< HEAD
                     <th>STT</th>
                     <th>Tên sản phẩm</th>
                     <th>Giá</th>
                     <th>Thao tác</th>
-=======
-                    <td><%= product.id %></td>
-                    <td><a><%= product.name %></a></td>
-                    <td><%= product.price %></td>
-                    <td>
-                        <a href="/edit/<%= product.id %>">Chỉnh sửa</a> |
-                        <a href="/delete/<%= product.id %>">Xóa</a>
-                    </td>
->>>>>>> origin/main
                 </tr>
             </thead>
             <tbody>
@@ -50,9 +38,7 @@
                         </td>
                         <td>
                             <a href="/edit/<%= product.id %>">Chỉnh sửa</a> |
-
                             <a href="#" class="delete-product" data-product-id="<%= product.id %>">Xóa</a>
-
                         </td>
                     </tr>
                     <% }); %>
@@ -64,29 +50,29 @@
             </tbody>
         </table>
         <!-- Add a modal dialog for confirmation -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this product?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <form method="POST" action="/delete" id="deleteProductForm">
-                    <input type="hidden" name="id" id="deleteProductId" value="">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this product?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <form method="POST" action="/delete" id="deleteProductForm">
+                            <input type="hidden" name="id" id="deleteProductId" value="">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
 
 </body>
 <!-- Add this JavaScript after including jQuery and Bootstrap scripts -->
@@ -96,14 +82,11 @@
         $('.delete-product').click(function (e) {
             e.preventDefault();
             const productId = $(this).data('product-id');
-
             // Set the product ID in the hidden input field
             $('#deleteProductId').val(productId);
-
             // Show the confirmation modal
             $('#confirmDeleteModal').modal('show');
         });
-
         // When the modal is hidden, reset the form
         $('#confirmDeleteModal').on('hidden.bs.modal', function () {
             $('#deleteProductId').val('');

@@ -26,7 +26,26 @@ function addFlashMessage(req, type, message) {
     req.session.flashMessages.push({ type, message });
 }
 
+function redirectToLogin(req, res, next) {
+	if (!req.session.login) {
+		return res.redirect("/login");
+	}
+
+	next();
+}
+
+function redirectToHome(req, res, next) {
+	if (req.session.login) {
+		return res.redirect("/");
+	}
+
+	next();
+}
+
+
 module.exports = {
     checkProductValidation,
-    addFlashMessage
+    addFlashMessage,
+	redirectToHome,
+	redirectToLogin
 };

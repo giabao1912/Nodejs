@@ -17,7 +17,9 @@ var storage = multer.diskStorage({
         cb(null, 'uploads');
     },
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now());
+        cb(null, file.originalname);
+
+        // cb(null, file.fieldname + '-' + Date.now());
     }
 });
 
@@ -62,15 +64,16 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/', (req, res) => {
-    res.render('index', { products });
+app.get('/', fn.redirectToLogin, (req, res) => {
+   return res.render('index', { products });
 });
 
-app.get('/login', (req, res) => {
+app.get('/login',fn.redirectToHome, (req, res) => {
     // res.send('Trang chu login')
     res.render('login', { email: '', password: '', });
 });
-app.post('/login', (req, res) => {
+app.post('/login',  (req, res) => {
+    let { email, password } = req.body;
     let body = req.body;
     let err = '';
     if (!body.email) {
@@ -90,15 +93,17 @@ app.post('/login', (req, res) => {
         err = 'Invalid Email or Password';
     }
     if (err.length > 0) {
-        res.render('login', { errorMessage: err });
+        res.render('login', { errorMessage: err , email, password});
     }
     else {
-        res.end('Login successful');
+        req.session.login = true;
+
+        // Redirect the user to the "/add" page
+        res.redirect('/');
     }
-    return res.redirect('/');
 });
 
-app.get('/add', (req, res) => {
+app.get('/add', fn.redirectToLogin, (req, res) => {
     res.render('add');
 });
 app.post('/add', (req, res) => {
@@ -124,60 +129,25 @@ app.post('/add', (req, res) => {
             desc,
             imgName: req.file.filename,
         });
-        fn.addFlashMessage(req, 'success', 'Product added successfully');
+        req.flash("success", "Product added successfully");
         return res.redirect('/');
     });
 });
 
-<<<<<<< HEAD
-app.get("/edit/:id",  (req, res) => {
-	let id = req.params.id;
-=======
-// tui mới làm cái là localhost/edit/1 thôi chứ chưa có click zo chỉnh sửa
-app.get("/edit/:id", (req, res) => {
+app.get("/edit/:id", fn.redirectToLogin, (req, res) => {
     let id = req.params.id;
->>>>>>> origin/main
-
     const product = products.find((p) => p.id == id);
 
     if (!product) {
         return res.render("notfound");
     }
 
-<<<<<<< HEAD
 	return res.render("edit", {
 		id,
 		...product,
         title: "Chỉnh sửa thông tin sản phẩm",
 		errorMsg: "",
 	});
-=======
-    return res.render("edit", {
-        title: `Edit ${product.name}`,
-        id,
-        ...product,
-        errorMsg: "",
-    });
-});
-
-// tui mới làm cái là localhost/edit/1 thôi chứ chưa có click zo chỉnh sửa
-app.post("/edit", (req, res) => {
-    let id = req.body.id;
-    
-    const product = products.find((p) => p.id == id);
-    
-    if (!product) {
-        return res.render("notfound");
-    }
-
-    let { name, price, desc } = req.body;
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.desc = desc || product.desc;
-
-    // TODO: ông add thêm cái flash message chổ này để thông báo cho người dùng là cập nhật thành công nè
-    return res.redirect("/");
->>>>>>> origin/main
 });
 
 
@@ -223,4 +193,4 @@ app.use((req, res) => {
     res.end('Lien ket nay khong duoc ho tro');
 });
 
-app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`http://localhost:${PORT}`))
