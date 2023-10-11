@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 
@@ -38,6 +38,7 @@
                         </td>
                         <td>
                             <a href="/edit/<%= product.id %>">Chỉnh sửa</a> |
+
                             <a href="#" class="delete-product" data-product-id="<%= product.id %>">Xóa</a>
                         </td>
                     </tr>
@@ -77,11 +78,12 @@
 </body>
 <!-- Add this JavaScript after including jQuery and Bootstrap scripts -->
 <script>
+
     $(document).ready(function () {
-        // When the "Xóa" (Delete) link is clicked
+        // When the "Xoa" (Delete) link is clicked
         $('.delete-product').click(function (e) {
             e.preventDefault();
-            const productId = $(this).data('product-id');
+            const productId = $(this).data('product-id'); // Retrieve the product ID
             // Set the product ID in the hidden input field
             $('#deleteProductId').val(productId);
             // Show the confirmation modal
@@ -89,10 +91,19 @@
         });
         // When the modal is hidden, reset the form
         $('#confirmDeleteModal').on('hidden.bs.modal', function () {
+            // Clear the input field and form submission
             $('#deleteProductId').val('');
+            $('#deleteProductForm').attr('action', ''); // Clear the form action
+        });
+        // When the "Delete" button in the modal is clicked
+        $('#confirmDeleteModal .btn-danger').click(function () {
+            // Set the form action and submit the form
+            $('#deleteProductForm').attr('action', '/delete');
+            $('#deleteProductForm').submit();
         });
     });
 </script>
 
+</script>
 
 </html>
