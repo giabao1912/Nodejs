@@ -1,0 +1,88 @@
+<div>
+	<div class="modal-dialog">
+		<form action="" method="post">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title text-primary">Thêm thông tin người dùng</h4>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="name">Nhập id người dùng</label>
+						<input
+							class="form-control"
+							type="text"
+							placeholder="Nhập id người dùng"
+							id="id"
+							name="id"
+						/>
+					</div>
+					<div class="form-group">
+						<label for="name">Tên người dùng</label>
+						<input
+							class="form-control"
+							type="text"
+							placeholder="Nhập tên người dùng"
+							id="name"
+							name="name"
+						/>
+					</div>
+					<div class="form-group">
+						<label for="email">Email</label>
+						<input
+							class="form-control"
+							type="text"
+							placeholder="Nhập email"
+							id="email"
+							name="email"
+						/>
+					</div>
+					<div class="form-group mb-1">
+						<label class="mr-5">Chọn giới tính</label>
+						<div class="form-check-inline">
+							<label class="form-check-label">
+								<input
+									type="radio"
+									class="form-check-input"
+									name="gender"
+									value="male"
+								/>Nam
+							</label>
+						</div>
+						<div class="form-check-inline">
+							<label class="form-check-label">
+								<input
+									type="radio"
+									class="form-check-input"
+									name="gender"
+									value="female"
+								/>Nữ
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="age">Age</label>
+						<input
+							class="form-control"
+							type="text"
+							placeholder="Nhập age"
+							id="age"
+							name="age"
+						/>
+					</div>
+					<% if (error) { %>
+					<div class="alert alert-danger"><%= error %></div>
+					<% } %>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success">Thêm</button>
+					<a href="/" class="btn btn-warning">Quay lại</a>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
