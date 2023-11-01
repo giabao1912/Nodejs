@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+
+        #weatherApp {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        #inputContainer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 70%;
+            margin-right: 10px;
+            flex: 1;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #weatherInfo {
+            display: none;
+            margin-top: 20px;
+            background: rgba(0, 123, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h3 {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="weatherApp">
+        <h2>Weather App</h2>
+        <div id="inputContainer">
+            <input type="text" id="cityInput" placeholder="Enter city name">
+            <button onclick="getWeather()">Get Weather</button>
+        </div>
+
+
+        <div id="weatherInfo">
+            <h3>Weather Information</h3>
+            <img id="weatherIcon"></img>
+            <p><b>City:</b> <span id="cityName"></span></p>
+            <p><b>Temperature:</b> <span id="temperature"></span>°C</p>
+            <p><b>Condition: </b> <span id="condition"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            fetch(`/weather?city=${city}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cityName').innerText = data.location.name;
+                    document.getElementById('temperature').innerText = data.current.temp_c;
+                    document.getElementById('condition').innerText = data.current.condition.text;
+                    document.getElementById('weatherIcon').src = data.current.condition.icon;
+                    document.getElementById('weatherInfo').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
