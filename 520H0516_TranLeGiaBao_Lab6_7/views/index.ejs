@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>File Managements</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+        integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .fa,
+        .fas {
+            color: #858585;
+        }
+
+        .fa-folder {
+            color: rgb(74, 158, 255);
+        }
+
+        i.fa,
+        table i.fas {
+            font-size: 16px;
+            margin-right: 6px;
+        }
+
+        i.action {
+            cursor: pointer;
+        }
+
+        a {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row align-items-center py-5">
+            <div class="col-6">
+                <h3>
+                    File Manager</h2>
+                    Current Directory: <%= currentDir %>
+            </div>
+            <div class="col-6">
+                <div class="dropdown text-right">
+                    Xin chào <a class="dropdown-toggle text-primary" data-toggle="dropdown">
+                        <%= user.name %>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-info-circle"></i>
+                            &nbsp;&nbsp;Cập nhật thông tin
+                        </a>
+                        <a class="dropdown-item" href="/logout ">
+                            <i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp; Đăng xuất</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Products</a></li>
+            <li class="breadcrumb-item active">Accessories</li>
+        </ol>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <span class="fa fa-search"></span>
+                </span>
+            </div>
+            <input type="text" class="form-control" placeholder="Search" id="searchInput">
+        </div>
+        <div class="btn-group my-3">
+            <button type="button" class="btn btn-light border" id="create-folder">
+                <i class="fas fa-folder-plus"></i> New folder
+            </button>
+            <button type="button" class="btn btn-light border" id="create-text-file">
+                <i class="fas fa-file"></i> Create text file
+            </button>
+        </div>
+        <table class="table table-hover border" id="myTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Size</th>
+                    <th>Last modified</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% files.forEach(f=> { %>
+                    <tr>
+                        <td>
+                            <%- f.icon -%> <a href="<%= f.subPath %>">
+                                    <%= f.name %>
+                                </a>
+                        </td>
+                        <td>
+                            <%= f.type %>
+                        </td>
+                        <td>
+                            <%= f.size %>
+                        </td>
+                        <td>
+                            <%= f.lastModified %>
+                        </td>
+                        <td>
+                            <span class="download-file" data-subpath="<%= f.subPath %>" data-filename="<%= f.name %>"
+                                data-type="<%= f.type %>">
+                                <i class="fa fa-download action"></i>
+                            </span>
+                            <span data-toggle="modal" data-target="#rename-dialog" data-filename="<%= f.name %>">
+                                <i class="fa fa-edit action"></i>
+                            </span>
+                            <span class="delete-file" data-filename="<%= f.name %>" data-currentdir="<%= currentDir %>">
+                                <i class="fa fa-trash action"></i>
+                            </span>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+        <div class="border rounded mb-3 mt-5 p-3">
+            <h4>File upload</h4>
+            <form>
+                <div class="form-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="attachment">
+                        <label class="custom-file-label" for="attachment">Choose file</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="progress" style="height:5px">
+                        <div id="progress-indicator" class="progress-bar bg-success" style="width:40%;height:10px">
+                        </div>
+                    </div>
+                </div>
+                <p class="small">Người dùng chỉ được upload tập tin có kích thước tối đa là 20 MB. Các tập tin thực thi
+                    (*.exe, *.msi, *.sh) không được phép upload.</p>
+                <p class="small">Khi nhấn nút upload thì</p>
+                <ul class="small">
+                    <li>Progress bar sẽ hiển thị tiến độ của quá trình upload. Ban đầu progress bar bị ẩn đi.</li>
+                    <li>Khi đang diễn ra quá trình upload thì button <strong>Upload</strong> sẽ bị disabled.</li>
+                    <li>Sau khi upload thành công thì progress bar được ẩn đi, file sẽ được hiển thị trong danh sách bên
+                        trên và button được enabled trở lại.</li>
+                </ul>
+                <button id="uploadButton" type="button" class="btn btn-success px-5">Upload</button>
+            </form>
+        </div>
+
+        <div class="modal-example my-5">
+            <h4>Một số dialog mẫu</h4>
+            <p>Sử dụng các dialog này cho các chức năng trong bài tập.</p>
+            <ul>
+                <li><a href="#" data-toggle="modal" data-target="#confirm-delete">Confirm delete</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#confirm-rename">Confirm rename</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#new-file-dialog">New file dialog</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#message-dialog">Message Dialog</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <!-- Delete dialog -->
+    <div class="modal fade" id="confirm-delete-file">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Xác nhận xóa tập tin</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc rằng muốn xóa tập tin <strong id="delete-file-name"></strong>?</p>
+                    <input type="hidden" class="form-control" id="currentDir" value="<%= currentDir %>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="confirm-delete-file-button"
+                        data-dismiss="modal">Xóa</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        data-dismiss="modal">Không</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Rename dialog -->
+    <div class="modal fade" id="rename-dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Đổi tên</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Nhập tên mới cho tập tin/thư mục <span id="rename-target"></span></p>
+                    <input type="text" placeholder="Nhập tên mới" class="form-control" id="new-name" />
+                    <input type="hidden" class="form-control" id="currentDir" value="<%= currentDir %>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirm-rename" data-dismiss="modal">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New file dialog -->
+    <div class="modal fade" id="new-file-dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Tạo tập tin mới</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="fileName">File Name</label>
+                        <input type="text" placeholder="File name" class="form-control" id="fileName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Nội dung</label>
+                        <textarea rows="10" id="content" class="form-control" placeholder="Nội dung"></textarea>
+                    </div>
+                </div>
+
+                <input type="hidden" class="form-control" id="currentDir" value="<%= currentDir %>">
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="confirm-create-text-file"
+                        data-dismiss="modal">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New folder dialog -->
+    <div class="modal fade" id="new-folder-dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Tạo thư mục mới</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="folder-name">Tên thư mục</label>
+                        <input type="text" class="form-control" id="folder-name">
+                    </div>
+                </div>
+                <input type="hidden" class="form-control" id="currentDir" value="<%= currentDir %>">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="confirm-create-folder"
+                        data-dismiss="modal">Tạo</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- message dialog -->
+    <div class="modal fade" id="message-dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Xóa file</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Bạn không được cấp quyền để xóa tập tin/thư mục này</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        // Tai file
+        $(document).on('click', '.download-file', function () {
+            const fileName = $(this).data('filename');
+            const subPath = $(this).data('subpath');
+            const type = $(this).data('type');
+
+            // lấy link gốc http://localhost:9090
+            const currentDir = window.location.origin;
+
+            // Kết hợp link gốc + subPath
+            const downloadUrl = currentDir + subPath;
+
+            if (type == "Folder") {
+                alert("Đây là Folder");
+            } else {
+                fetch(downloadUrl)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    });
+            }
+        });
+
+        // Doi ten file va folder
+        $(document).on('click', '[data-target="#rename-dialog"]', function () {
+            const fileName = $(this).data('filename');
+            $('#rename-target').text(fileName);
+            $('#new-name').val(fileName);
+        });
+
+        $('#confirm-rename').click(function () {
+            const oldName = $('#rename-target').text();
+            const newName = $('#new-name').val();
+            var currentDir = $("#currentDir").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/rename",
+                data: { oldName: oldName, newName: newName, currentDir },
+                success: function (response) {
+                    alert(response);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error("Lỗi: " + error);
+                }
+            });
+        });
+
+        // Tao file text
+        $(document).ready(function () {
+            $("#create-text-file").click(function () {
+                $("#new-file-dialog").modal("show");
+            });
+
+            $("#confirm-create-text-file").click(function () {
+                var fileName = $("#fileName").val();
+                var content = $("#content").val();
+                var currentDir = $("#currentDir").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/create-text-file", // Đường dẫn tới route xử lý tạo thư mục
+                    data: { fileName, content, currentDir },
+                    success: function (response) {
+                        // Xử lý phản hồi từ máy chủ
+                        alert(response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error("Lỗi: " + error);
+                    }
+                });
+            });
+        });
+        // Tao thu muc moi
+        $(document).ready(function () {
+            $("#create-folder").click(function () {
+                $("#new-folder-dialog").modal("show");
+            });
+
+            $("#confirm-create-folder").click(function () {
+                var folderName = $("#folder-name").val();
+                var currentDir = $("#currentDir").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/create-folder", // Đường dẫn tới route xử lý tạo thư mục
+                    data: { folderName, currentDir },
+                    success: function (response) {
+                        // Xử lý phản hồi từ máy chủ
+                        alert(response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error("Lỗi: " + error);
+                    }
+                });
+            });
+        });
+
+        // Xoa thu muc
+        $(document).on('click', '.delete-file', function () {
+            const fileName = $(this).data('filename');
+            const currentDir = $(this).data('currentdir');
+
+            // Set the file name in the modal
+            $('#delete-file-name').text(fileName);
+
+            // Show the delete confirmation modal
+            $('#confirm-delete-file').modal('show');
+        });
+
+        $('#confirm-delete-file-button').click(function () {
+            const fileName = $('#delete-file-name').text();
+            const currentDir = $('#currentDir').val(); // You can update this if necessary
+
+            $.ajax({
+                type: "POST",
+                url: "/delete", // Đường dẫn tới route xử lý xóa tập tin
+                data: { fileName: fileName, currentDir },
+                success: function (response) {
+                    alert(response);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error("Lỗi: " + error);
+                }
+            });
+        });
+        $(document).ready(() => {
+            // Initially hide the progress bar
+            $('#progress-indicator').parent('.progress').hide();
+
+            // Upload button click event
+            $('#uploadButton').click(() => {
+                let uploadFile = $('#attachment')[0]; // Get the file input
+                if (uploadFile.files.length === 0) {
+                    return alert('Vui lòng chọn tập tin'); // Alert if no file is selected
+                }
+
+                let file = uploadFile.files[0]; // Get the actual file
+
+                let form = new FormData(); // Create a FormData object to hold the file data
+                const email = '<%= user.email %>'; // Replace with server-side template variable
+
+                form.append('email', email); // Append email to form data
+                form.append('attachment', file); // Append file to form data
+
+                let xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest
+                xhr.open('POST', '/upload', true); // Initialize a POST request to the '/upload' endpoint
+
+                // Show the progress bar and disable the upload button when upload starts
+                xhr.onloadstart = () => {
+                    $('#progress-indicator').parent('.progress').show(); // Show the progress bar
+                    $('#uploadButton').prop('disabled', true); // Disable the upload button
+                };
+
+                // Update the progress bar as the file is uploaded
+                xhr.upload.addEventListener('progress', e => {
+                    if (e.lengthComputable) {
+                        let percentComplete = parseInt((e.loaded / e.total) * 100); // Calculate the percentage
+                        $('#progress-indicator').css('width', percentComplete + '%').text(percentComplete + '%'); // Update the progress bar width and text
+                    }
+                });
+
+                // Handle the response from the server
+                xhr.onloadend = () => {
+                    // Hide the progress bar and re-enable the upload button when the upload is complete
+                    $('#progress-indicator').parent('.progress').hide(); // Hide the progress bar
+                    $('#uploadButton').prop('disabled', false); // Re-enable the upload button
+
+                    if (xhr.status === 200) {
+                        alert('Upload thành công'); // Alert success
+                        location.reload(); // Reload the page to update the file list
+                    } else {
+                        alert('Đã xảy ra lỗi trong quá trình tải lên'); // Alert any errors
+                    }
+                };
+
+                // Send the form data with the file to the server
+                xhr.send(form);
+            });
+
+            // Other existing code...
+        });
+
+        // Hàm tìm kiếm
+        function searchTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        break;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // Thêm sự kiện cho ô nhập liệu
+        document.getElementById("searchInput").addEventListener("keyup", searchTable);
+    </script>
+
+</body>
+
+</html>
