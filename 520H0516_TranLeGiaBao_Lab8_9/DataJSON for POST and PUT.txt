@@ -1,0 +1,34 @@
+//Register
+{
+    "email": "giabao1912@gmail.com",
+    "password": "123456",
+    "fullName": "Bao112"
+}
+
+//Login
+{
+    "email": "giabao1912@gmail.com",
+    "password": "123456"
+}
+
+//Product
+{
+    "name": "Laptop Dell",
+    "price": "100",
+    "image": "image-link",
+    "describe": "The best Laptop for developer"
+}
+
+//Order
+{
+    "products": [
+        {
+            "id": "655337334a6c5dbd05a13133",
+            "quantity": 6
+        },
+        {
+            "id": "6553372a4a6c5dbd05a13131",
+            "quantity": 9
+        }
+    ]
+}
